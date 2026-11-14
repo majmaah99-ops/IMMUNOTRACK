@@ -32,12 +32,12 @@ export function analyzeScenario(scenario) {
   }
   const changePercent = ((latest.nlr - baseline) / baseline) * 100;
   const trend = missionRows.slice(-3);
-  const rising = trend.length >= 3 && trend.every((r,i)=> i === 0 || r.nlr > trend[i-1].nlr);
+  const rising = trend.length >= 3 && trend.every((r,i)=> r.nlr !== null && (i === 0 || r.nlr > trend[i-1].nlr));
   const above = changePercent >= DEMO_SETTINGS.trendPercent;
   const alerts = [];
   if (above) alerts.push(`Latest NLR is ${changePercent.toFixed(1)}% above this astronaut's synthetic baseline.`);
   if (rising) alerts.push('Three successive valid mission readings are increasing.');
   if (scenario.sleepHours !== null && scenario.sleepHours < 6) alerts.push(`Reported sleep: ${scenario.sleepHours} h (context only; no causal inference).`);
   if (above && rising) return { status:'review', heading:'REVIEW TREND', message:alerts.join(' '), action:'Consider repeating the measurement and checking symptoms with the designated medical protocol. Do not treat this as a diagnosis.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
-  return { status:'stable', heading:'NO DEMO TREND ALERT', message:`Latest NLR is ${changePercent.toFixed(1)}% relative to the personal synthetic baseline. No demo rule triggered.`, action:'Continue routine measurements under the mission medical protocol.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
+  return { status:'stable', heading:'NO DEMO TREND ALERT', message:`Latest NLR is ${changePercent.toFixed(1)}% relative to the personal synthetic baseline. No demo rule triggered. This does not confirm normal immune health.`, action:'Continue routine measurements under the mission medical protocol.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
 }
