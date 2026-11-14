@@ -31,7 +31,7 @@ export function analyzeScenario(scenario) {
     return { status:'insufficient', heading:'INSUFFICIENT DATA', message:'Missing, unverified, or insufficient measurements prevent reliable trend interpretation.', action:'Verify sample quality and repeat the measurement per the mission medical protocol.', baseline, changePercent:null, chart, evidence: { validBaseline:baselineRows.length, missing, total:missionRows.length } };
   }
   const changePercent = ((latest.nlr - baseline) / baseline) * 100;
-  const trend = missionRows.filter(r => r.nlr !== null).slice(-3);
+  const trend = missionRows.slice(-3);
   const rising = trend.length >= 3 && trend.every((r,i)=> i === 0 || r.nlr > trend[i-1].nlr);
   const above = changePercent >= DEMO_SETTINGS.trendPercent;
   const alerts = [];
