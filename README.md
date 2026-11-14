@@ -6,11 +6,11 @@
 
 ## High-Level Summary
 
-IMMUNOTRACK 2.0 explores an offline-first approach to longitudinal immune-health monitoring for astronauts. A transparent JavaScript engine calculates the neutrophil-to-lymphocyte ratio (NLR), compares values with a personal historical baseline, explains unusual simulated trends, and withholds interpretation when data quality is inadequate. It is a research prototype rather than a diagnosis, infection prediction, or clinical recommendation system.
+IMMUNOTRACK 2.0 explores a locally computed approach to longitudinal immune-health monitoring for astronauts. A transparent JavaScript engine calculates the neutrophil-to-lymphocyte ratio (NLR), compares values with a personal historical baseline, explains unusual simulated trends, and withholds interpretation when data quality is inadequate. It is a research prototype rather than a diagnosis, infection prediction, or clinical recommendation system.
 
 ## 🎯 NASA Research Alignment
 
-IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-201** (Monitoring immune functions during spaceflight). Our research goal is to provide a locally running decision-support tool to help crews interpret immune data such as NLR, with a future pathway to onboard measurements. The present version demonstrates this concept using synthetic measurements; it has not replaced or reduced reliance on Earth-based laboratories.
+IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-201** (Monitoring immune functions during spaceflight). Our research goal is to provide a locally running decision-support tool to help crews interpret immune data such as NLR, with a future pathway to onboard measurements. The mission-simulation engine uses synthetic measurements. A separate evidence panel also calculates NLR from four traceable Inspiration4 CBC rows attributed to NASA OSDR OSD-569 via a publicly accessible third-party mirror; direct original-file verification remains pending. The prototype has not replaced or reduced reliance on Earth-based laboratories.
 
 **Scope clarification:** This paragraph describes the *intended research alignment and future goal*. This prototype has not been clinically validated, flown in space, integrated with onboard diagnostic hardware, or demonstrated to replace Earth-based laboratories.
 
@@ -19,6 +19,7 @@ IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-20
 ## Features
 
 - Three interactive, **fully synthetic** astronaut cases: A (stable), B (gradual trend), C (missing / unverified samples).
+- Separate NASA-origin OSD-569 CBC **research-evidence panel**: four source-identifiable C001 preflight/postflight counts from a public mirror, with reproducible NLR calculations (not used as synthetic astronaut baselines).
 - NLR calculation from neutrophil and lymphocyte counts, with input validation and individual median baseline.
 - Explainable, *experimental* trend rules. No AI model or clinical inference is claimed.
 - Explicit data-quality refusal rather than forcing a risk label.
@@ -27,10 +28,29 @@ IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-20
 
 ## Data provenance
 
-**Every displayed measurement in this version is `Synthetic`. The value `2.27` has NOT been verified against a NASA record and is not used or attributed to NASA.** No real NASA or Inspiration4 measurement has been downloaded, embedded, or validated in this repository. NASA Open Science Data Repository (OSDR), particularly Inspiration4 CBC dataset **OSD-569**, is a candidate for future documented integration, subject to checking available fields, units, consent/data-use constraints and proper attribution. Do not cite this application as a NASA-trained, NASA-validated, or clinical model.
+**Two deliberately separate data tracks**:
 
-- [NASA OSDR](https://osdr.nasa.gov/)
+1. **Mission simulation (A/B/C):** Every reading and baseline in the three interactive astronaut scenarios is `Synthetic`. No synthetic point is labeled as a NASA measurement.
+2. **NASA research-evidence panel:** Four source-identifiable CBC rows for the **same anonymized individual C001** are included from a *public third-party mirror* of the NASA OSDR **OSD-569 / LSDS-7 Complete Blood Count** transformed CSV. Neutrophils and lymphocytes use the source's absolute counts (cells/µL), and NLR is computed at runtime. The values are preflight and postflight, **not in-flight daily trends**.
+
+| Source sample | Neutrophils (cells/µL) | Lymphocytes (cells/µL) |
+| --- | ---: | ---: |
+| `C001_whole-blood_L-92_cbc` | 2,349 | 2,241 |
+| `C001_whole-blood_L-44_cbc` | 2,998 | 1,859 |
+| `C001_whole-blood_L-3_cbc` | 3,570 | 2,667 |
+| `C001_whole-blood_R+1_cbc` | 2,685 | 1,640 |
+
+The preflight reference number shown in the research panel is the **median of these three C001 preflight NLR values**, not an externally validated medical cutoff. This reference is **not transferred to simulated astronauts A/B/C**. The previously suggested arbitrary number `2.27` was not validated and is not used.
+
+**Provenance and verification limits:** The mirror repository publishes a manifest claiming a NASA-origin download, fetched Nov 3, 2026, with SHA-256 `32e4f9c97d3b636b5d5c2e72dab8c4d3319dee64c437508b092dad04603b2b8f` for the full source CSV. We have inspected the mirrored text and identified the exact four rows, **but could not download the original NASA file to independently verify that the mirror matches the primary source byte-for-byte**. The selected C001 rows do not involve the separately reported C003 L-92 data-column anomaly. Treat these values as *NASA-origin, publicly mirrored, pending primary verification*, not independently validated NASA records.
+
+- [NASA OSDR study OSD-569](https://osdr.nasa.gov/bio/repo/data/studies/OSD-569)
+- [Public mirror source CSV](https://github.com/ibeastmanish/ASCLEPIUS/blob/main/data/raw/LSDS-7_Complete_Blood_Count_CBC_TRANSFORMED.csv)
+- [Public mirror provenance manifest](https://github.com/ibeastmanish/ASCLEPIUS/blob/main/data/manifest.json)
+- [NASA OSDR repository](https://osdr.nasa.gov/)
 - [NASA Human Research Roadmap](https://humanresearchroadmap.nasa.gov/)
+
+**Eligibility note:** Inclusion of NASA-origin data does not alone establish eligibility for NASA Space Apps Global Awards. The team must confirm that its selected resource is among those listed for this specific challenge and cite all resources and third-party mirrors accurately in the submission.
 
 ## How the experimental engine works
 
@@ -68,7 +88,7 @@ Analysis is implemented entirely in client-side JavaScript with no backend depen
 
 ## Limitations / safety
 
-This is educational research software created for a hackathon. It is **not** a clinical diagnostic tool, medical device, immune-risk predictor, astronaut flight-certified system, or substitute for physician oversight and mission medical protocols. It cannot prove that sleep influences NLR, reduce infections, or independently manage a crew member's health. The three demonstration scenarios are illustrative and do not establish sensitivity, specificity, or real-world performance.
+This is educational research software created for a hackathon. It is **not** a clinical diagnostic tool, medical device, immune-risk predictor, astronaut flight-certified system, or substitute for physician oversight and mission medical protocols. It cannot prove that sleep influences NLR, reduce infections, or independently manage a crew member's health. The NASA-origin research panel is descriptive only, without clinical inference. The three demonstration scenarios are illustrative and do not establish sensitivity, specificity, or real-world performance.
 
 ## Use of AI tools
 
