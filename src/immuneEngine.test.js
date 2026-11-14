@@ -13,3 +13,5 @@ test('C requires more data, not a false red alert',()=>assert.equal(analyzeScena
 test('unverified 9.9 NLR is not automatically treated as an invalid numeric value',()=>{assert.equal(calculateNLR(19.8,2),9.9);assert.equal(analyzeScenario(scenarios.C).chart.find(r=>r.day==='D3').nlr,null);});
 test('chart provenance never claims unverified NASA measurements',()=>{for (const s of Object.values(scenarios)) assert.ok(analyzeScenario(s).chart.every(r=>r.source==='Synthetic'));});
 test('a single increased reading does not count as confirmed rising trend',()=>{const s={...scenarios.B,readings:[...scenarios.B.readings.slice(0,3),{day:'D1',phase:'mission',neutrophils:6,lymphocytes:2,quality:'verified'}]};assert.equal(analyzeScenario(s).status,'stable');});
+
+test('missing sample breaks consecutiveness',()=>{const s={...scenarios.B,readings:[...scenarios.B.readings.slice(0,3),...scenarios.B.readings.slice(3,7),{day:'D5',phase:'mission',neutrophils:null,lymphocytes:null,quality:'missing'},{day:'D6',phase:'mission',neutrophils:5.6,lymphocytes:2,quality:'verified'}]};assert.equal(analyzeScenario(s).status,'stable');});
