@@ -10,7 +10,7 @@ IMMUNOTRACK 2.0 explores an offline-first approach to longitudinal immune-health
 
 ## 🎯 NASA Research Alignment
 
-IMMUNOTRACK 2.0 directly addresses NASA's Human Research Roadmap Gap **IM-201** (Monitoring immune functions during spaceflight). By providing an offline decision-support tool, we enable crews to interpret immune data (like NLR) without relying on Earth-based labs.
+IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-201** (Monitoring immune functions during spaceflight). Our research goal is to provide a locally running decision-support tool to help crews interpret immune data such as NLR, with a future pathway to onboard measurements. The present version demonstrates this concept using synthetic measurements; it has not replaced or reduced reliance on Earth-based laboratories.
 
 **Scope clarification:** This paragraph describes the *intended research alignment and future goal*. This prototype has not been clinically validated, flown in space, integrated with onboard diagnostic hardware, or demonstrated to replace Earth-based laboratories.
 
@@ -27,7 +27,7 @@ IMMUNOTRACK 2.0 directly addresses NASA's Human Research Roadmap Gap **IM-201** 
 
 ## Data provenance
 
-**Every displayed measurement in this version is `Synthetic`.** No real NASA or Inspiration4 measurement has been downloaded, embedded, or validated in this repository. NASA Open Science Data Repository (OSDR), particularly Inspiration4 CBC dataset **OSD-569**, is a candidate for future documented integration, subject to checking available fields, units, consent/data-use constraints and proper attribution. Do not cite this application as a NASA-trained, NASA-validated, or clinical model.
+**Every displayed measurement in this version is `Synthetic`. The value `2.27` has NOT been verified against a NASA record and is not used or attributed to NASA.** No real NASA or Inspiration4 measurement has been downloaded, embedded, or validated in this repository. NASA Open Science Data Repository (OSDR), particularly Inspiration4 CBC dataset **OSD-569**, is a candidate for future documented integration, subject to checking available fields, units, consent/data-use constraints and proper attribution. Do not cite this application as a NASA-trained, NASA-validated, or clinical model.
 
 - [NASA OSDR](https://osdr.nasa.gov/)
 - [NASA Human Research Roadmap](https://humanresearchroadmap.nasa.gov/)
@@ -41,7 +41,7 @@ IMMUNOTRACK 2.0 directly addresses NASA's Human Research Roadmap Gap **IM-201** 
 5. If more than 35% of mission measurements are missing/unverified, the current sample is invalid, or baseline is inadequate, return **INSUFFICIENT DATA**.
 6. Report what the rule observed and suggest only verification / protocol-based follow-up, not a diagnosis.
 
-**Important:** The 18%, 35%, three-sample and sleep-context settings are illustrative demo choices, **not NASA or clinical safety thresholds**. NLR can vary for many reasons. A high NLR is not proof of infection or immune dysfunction.
+**Important:** The 18%, 35%, three-sample and sleep-context settings are illustrative demo choices, **not NASA or clinical safety thresholds**. NLR is a non-specific marker that can vary for many reasons. A high NLR is not proof of infection or immune dysfunction. A green demo label means only that the example rule did not trigger, not that the astronaut is healthy.
 
 ## Run locally
 
