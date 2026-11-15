@@ -86,6 +86,27 @@ npm run preview
 
 Analysis is implemented entirely in client-side JavaScript with no backend dependency. **Offline-first does not yet mean the app can always be loaded after the internet is disconnected**: that requires service-worker / asset-caching support, or a locally served production build. For a real demonstration, run Vite locally or serve the built `dist/` folder and then verify the absence of network requests. A production-grade offline-capable PWA remains future work.
 
+## 🧪 Validation & Hardware Integration Plan
+
+**Current status:** This is a browser-based research prototype; no physical blood analyzer, clinical workflow, NASA analog campaign, or spacecraft hardware is connected or tested. All A/B/C mission scenarios are synthetic. A separate research panel computes NLR from selected Inspiration4 CBC rows attributed to NASA OSDR-569 through a public third-party mirror; independent verification of the original NASA file remains pending.
+
+**Why hardware matters:** Software cannot make an unreliable measurement reliable. A proposed future interface would accept data from a qualified, calibrated point-of-care (PoC) blood analyzer after verifying its measurement method, units, sample and instrument identifiers, calibration/quality-control status, timestamps, transport integrity, and traceable provenance. **rHEALTH ONE is an illustrative technology reference, not a device integrated with, certified for, or endorsed as compatible with IMMUNOTRACK.** Published research describes an rHEALTH ONE cytometry demonstration on the ISS; this does not mean it outputs our required differential blood counts or offers an integration API.
+
+**What our present data-quality checks do:** The demo rejects explicitly missing or unverified measurements, invalid numeric values, zero lymphocyte denominators, inadequate baseline data, and excessive gaps. These software checks **cannot independently detect a miscalibrated analyzer, pre-analytical blood-sample problems, systematic measurement bias, or whether a plausible-looking value is accurate**. A verified label in a synthetic case is a demo input flag, not physical validation.
+
+### Proposed validation stages (not yet completed)
+
+1. **Software and data verification (present prototype, additional verification required):** Unit-test the NLR formula and failure handling; independently obtain and checksum the primary NASA OSDR file; verify sample identities, units, and CBC arithmetic; build a reference test corpus. Record error-handling performance and software test results separately from any clinical performance claims.
+2. **Bench and Earth-based human research (future, conditional on approvals):** Connect a suitable PoC analyzer, compare its readings against laboratory reference methods across expected operating conditions, and measure agreement, repeatability, missingness, and data-transfer failures. Only after ethics review, informed consent, hardware suitability assessment and partnership approval, propose human-factors studies in an appropriate terrestrial analog (for example NASA HERA or an Antarctic station). Analog habitats simulate isolation and operational constraints, **not the full physiological effects of microgravity or space radiation**.
+3. **Spaceflight qualification and operational validation (long-term aspiration):** Subject the proposed hardware/software system to flight safety, reliability, cybersecurity, human factors and medical requirements. Seek a suitable in-orbit demonstration, potentially the ISS if a mission sponsor and program authorize it, before considering deep-space use. **No ISS test or flight approval is scheduled or claimed.**
+
+**Proposed success measures:** CBC measurement agreement with a reference instrument (if hardware is added), data completeness and traceability, correctly handled invalid records, false-alert rate, sensitivity/specificity against an independently adjudicated reference **only when clinically defined**, time to interpret a case, usability, and resilience under simulated communication delays. Baseline comparisons should be within-person and not inferred from an unrelated astronaut's samples.
+
+**Research context:**
+- [NASA — Analog Missions](https://www.nasa.gov/analog-missions/)
+- [NASA — HERA facility](https://www.nasa.gov/hera-about-hera/)
+- [rHEALTH ONE cytometry aboard the ISS (peer-reviewed research)](https://pubmed.ncbi.nlm.nih.gov/38528030/)
+
 ## Limitations / safety
 
 This is educational research software created for a hackathon. It is **not** a clinical diagnostic tool, medical device, immune-risk predictor, astronaut flight-certified system, or substitute for physician oversight and mission medical protocols. It cannot prove that sleep influences NLR, reduce infections, or independently manage a crew member's health. The NASA-origin research panel is descriptive only, without clinical inference. The three demonstration scenarios are illustrative and do not establish sensitivity, specificity, or real-world performance.
