@@ -132,10 +132,10 @@ AI assistance was used to draft and refine code, project documentation, and UI s
 
 ## Team — Jahiz AI
 
-- Rema Alsahli
-- Sadem Almutairi
-- Waten Alsahli
-- Hathal Alsahli
+- Hathal hadi Alsahli
+- Rema Hathal Alsahli
+- Wateen Hathal Alsahli
+- Sadem Lafi Almutairi
 
 ## License / credit
 
