@@ -12,13 +12,15 @@ export function computeBaseline(readings) {
   const mid = Math.floor(ordered.length / 2);
   return ordered.length % 2 ? ordered[mid] : (ordered[mid-1] + ordered[mid]) / 2;
 }
-function isSampleValid(sample) {
-  return sample && sample.quality === 'verified' && Number.isFinite(sample.neutrophils) && Number.isFinite(sample.lymphocytes) && sample.neutrophils >= 0 && sample.lymphocytes > 0;
+function isSampleValid(sample, manual = false) {
+  return sample && (sample.quality === 'verified' || (manual && sample.quality === 'entered')) && Number.isFinite(sample.neutrophils) && Number.isFinite(sample.lymphocytes) && sample.neutrophils >= 0 && sample.lymphocytes > 0;
 }
 export function analyzeScenario(scenario) {
+  const manual = scenario.mode === 'manual';
+  const provenance = manual ? 'User-entered (not instrument verified)' : 'Synthetic';
   const rows = scenario.readings.map((r, index) => ({
-    ...r, index, nlr: isSampleValid(r) ? calculateNLR(r.neutrophils, r.lymphocytes) : null,
-    source: 'Synthetic'
+    ...r, index, nlr: isSampleValid(r, manual) ? calculateNLR(r.neutrophils, r.lymphocytes) : null,
+    source: r.source || provenance
   }));
   const baselineRows = rows.filter(r => r.phase === 'baseline' && r.nlr !== null);
   const baseline = computeBaseline(baselineRows);
@@ -26,18 +28,18 @@ export function analyzeScenario(scenario) {
   const latest = missionRows.at(-1);
   const missing = missionRows.filter(r => r.nlr === null).length;
   const missingFraction = missionRows.length ? missing / missionRows.length : 1;
-  const chart = rows.map(r => ({ day:r.day, nlr:r.nlr, baseline, source:'Synthetic', quality:r.quality }));
+  const chart = rows.map(r => ({ day:r.day, nlr:r.nlr, baseline, source:r.source || provenance, quality:r.quality }));
   if (baseline === null || baseline <= 0 || !missionRows.length || missingFraction > DEMO_SETTINGS.maxMissingFraction || !latest || latest.nlr === null) {
-    return { status:'insufficient', heading:'INSUFFICIENT DATA', message:'Missing, unverified, or insufficient measurements prevent reliable trend interpretation.', action:'Verify sample quality and repeat the measurement per the mission medical protocol.', baseline, changePercent:null, chart, evidence: { validBaseline:baselineRows.length, missing, total:missionRows.length } };
+    return { status:'insufficient', heading:'INSUFFICIENT DATA', message:'Missing, flagged/unusable, or insufficient measurements prevent trend interpretation. User-entered values have not been independently verified.', action:'Verify sample quality and repeat the measurement per the mission medical protocol.', baseline, changePercent:null, chart, evidence: { validBaseline:baselineRows.length, missing, total:missionRows.length } };
   }
   const changePercent = ((latest.nlr - baseline) / baseline) * 100;
   const trend = missionRows.slice(-3);
   const rising = trend.length >= 3 && trend.every((r,i)=> r.nlr !== null && (i === 0 || r.nlr > trend[i-1].nlr));
   const above = changePercent >= DEMO_SETTINGS.trendPercent;
   const alerts = [];
-  if (above) alerts.push(`Latest NLR is ${changePercent.toFixed(1)}% above this astronaut's synthetic baseline.`);
+  if (above) alerts.push(`Latest NLR is ${changePercent.toFixed(1)}% above this individual's ${manual ? 'user-entered, unverified' : 'synthetic'} baseline.`);
   if (rising) alerts.push('Three successive valid mission readings are increasing.');
   if (scenario.sleepHours !== null && scenario.sleepHours < 6) alerts.push(`Reported sleep: ${scenario.sleepHours} h (context only; no causal inference).`);
-  if (above && rising) return { status:'review', heading:'REVIEW TREND', message:alerts.join(' '), action:'Consider repeating the measurement and checking symptoms with the designated medical protocol. Do not treat this as a diagnosis.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
-  return { status:'stable', heading:'NO DEMO TREND ALERT', message:`Latest NLR is ${changePercent.toFixed(1)}% relative to the personal synthetic baseline. No demo rule triggered. This does not confirm normal immune health.`, action:'Continue routine measurements under the mission medical protocol.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
+  if (above && rising) return { status:'review', heading:manual ? 'PROVISIONAL TREND REVIEW' : 'REVIEW TREND', message:alerts.join(' ') + (manual ? ' Input accuracy is not independently verified.' : ''), action:'Check the source and accuracy of the measurement; consult the applicable medical protocol. This demo is not a diagnosis.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
+  return { status:'stable', heading:'NO DEMO TREND ALERT', message:`Latest NLR is ${changePercent.toFixed(1)}% relative to the ${manual ? 'user-entered (unverified)' : 'personal synthetic'} baseline. No demo rule triggered. This does not confirm normal immune health.`, action:'Continue routine measurements under the mission medical protocol.', baseline, changePercent, chart, evidence:{ validBaseline:baselineRows.length, missing, total:missionRows.length } };
 }
