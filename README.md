@@ -19,6 +19,8 @@ IMMUNOTRACK 2.0 is designed to address NASA's Human Research Roadmap Gap **IM-20
 ## Features
 
 - Three interactive, **fully synthetic** astronaut cases: A (stable), B (gradual trend), C (missing / unverified samples).
+- **Manual Input** mode: add date-stamped reference and follow-up neutrophil/lymphocyte counts; calculate NLR; view a provisional personal trend and session history; remove entries or export the local session to CSV. Both `cells/µL` and `10³ cells/µL` units are supported.
+- **Three separate views**: Synthetic Simulation, Manual Input, and NASA Research. Manually entered readings are never represented as NASA measurements or laboratory-verified data.
 - Separate NASA-origin OSD-569 CBC **research-evidence panel**: four source-identifiable C001 preflight/postflight counts from a public mirror, with reproducible NLR calculations (not used as synthetic astronaut baselines).
 - NLR calculation from neutrophil and lymphocyte counts, with input validation and individual median baseline.
 - Explainable, *experimental* trend rules. No AI model or clinical inference is claimed.
@@ -51,6 +53,19 @@ The preflight reference number shown in the research panel is the **median of th
 - [NASA Human Research Roadmap](https://humanresearchroadmap.nasa.gov/)
 
 **Eligibility note:** Inclusion of NASA-origin data does not alone establish eligibility for NASA Space Apps Global Awards. The team must confirm that its selected resource is among those listed for this specific challenge and cite all resources and third-party mirrors accurately in the submission.
+
+## Manual Input — research-only prototype
+
+Select **02 · Manual Input** in the application. Enter an absolute neutrophil count (ANC), absolute lymphocyte count (ALC), the **same** units for both, a date, and either **Baseline** or **Monitoring**. NLR = ANC / ALC is unitless. The form accepts both `10³ cells/µL` and `cells/µL` and normalizes internally.
+
+- At least **three** valid-format baseline entries from **different dates** are required before evaluating the provisional trend of follow-up readings. Baseline dates must precede monitoring dates.
+- The two input states are deliberately distinct: **Entered — format checked only** (usable for exploratory calculations, **not instrument-verified**) and **Unverified/missing** (excluded from NLR trend calculations). An entered value may still be inaccurate.
+- The 18% rise and three-consecutive-readings criteria remain **illustrative demo logic** only. Any manual trend alert is marked **PROVISIONAL**; it is not a diagnostic assessment.
+- The manual session is held **only in in-memory React state**; it is **cleared on page refresh or tab close**. No upload, server-side storage, authentication, or device integration occurs. Export CSV allows the user to keep a local copy; be mindful of who can access downloaded files.
+- **Do not enter identifiable or sensitive real patient data** into this hackathon prototype. Use fictional or de-identified test values. No clinical or instrument validation has been performed.
+- The NASA research panel is separate. Its observational C001 reference is **never applied** to manually entered or synthetic astronauts.
+
+The `src/manualInput.js` module validates dates, measurement ordering, duplicate phase/date entries, units and numerical constraints, and provides CSV export. It has a dedicated automated test suite. The production `npm run build` also runs `npm test` first.
 
 ## How the experimental engine works
 
